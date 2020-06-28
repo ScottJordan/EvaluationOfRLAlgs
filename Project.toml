@@ -1,0 +1,13 @@
+name = "EvaluationOfRLAlgs"
+uuid = "16e39816-1f5b-480e-be12-c5b54d753d47"
+authors = ["Scott Jordan"]
+version = "0.1.0"
+
+[compat]
+julia = "1.1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
