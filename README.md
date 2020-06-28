@@ -100,7 +100,7 @@ The following defines simple actor-critic with eligibility traces algorithm usin
 using Statistics
 using Random
 using Distributions
-import EvaluationOfRLAlgs
+using EvaluationOfRLAlgs
 
 
 function run_alg()
