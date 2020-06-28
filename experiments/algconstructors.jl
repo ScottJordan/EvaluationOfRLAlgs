@@ -1,5 +1,5 @@
 using Distributions
-import Rllib
+import EvaluationOfRLAlgs
 
 function sample_fourierbasis(dorder_range, iorder_range, state_ranges, rng)
     sdim = size(state_ranges)[1]
@@ -17,7 +17,7 @@ function sample_fourierbasis(dorder_range, iorder_range, state_ranges, rng)
     # full = rand(rng, [true, false])
     # logp += log(0.5)
     full = false
-    ϕ = Rllib.FourierBasis(state_ranges, dorder, iorder, full)
+    ϕ = EvaluationOfRLAlgs.FourierBasis(state_ranges, dorder, iorder, full)
     return ϕ, [dorder, iorder,full], logp
 end
 
@@ -37,8 +37,8 @@ function log2RandDisc(low, high, rng)
 end
 
 function CreateSarsaLambda(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -52,13 +52,13 @@ function CreateSarsaLambda(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        qf = Rllib.LinearFunction(Float64, ϕ, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
     else
-        qf = Rllib.LinearFunction(Float64, sdesc, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -84,15 +84,15 @@ function CreateSarsaLambda(env, rng)
     αq, qalogp = logRand(qarange[1], qarange[2], rng)
     logp += qalogp
     push!(hyps, αq)
-    qopt = Rllib.AccumulatingTraceOptimizer(qf, αq, γ, λ)
+    qopt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(qf, αq, γ, λ)
 
-    agent = Rllib.Sarsa(qf, qopt, γ, ϵ)
+    agent = EvaluationOfRLAlgs.Sarsa(qf, qopt, γ, ϵ)
     return agent, hyps, logp
 end
 
 function CreateSarsaLambdaScaled(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -106,13 +106,13 @@ function CreateSarsaLambdaScaled(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        qf = Rllib.LinearFunction(Float64, ϕ, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
     else
-        qf = Rllib.LinearFunction(Float64, sdesc, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -133,22 +133,22 @@ function CreateSarsaLambdaScaled(env, rng)
     if discrete_states
         qarange = [1e-3, 0.1]
     else
-        phi_dim = Rllib.get_num_outputs(ϕ)
+        phi_dim = EvaluationOfRLAlgs.get_num_outputs(ϕ)
         qarange = [1e-3, 1.0] ./ phi_dim
     end
     αq, qalogp = logRand(qarange[1], qarange[2], rng)
     logp += qalogp
     push!(hyps, αq)
-    qopt = Rllib.AccumulatingTraceOptimizer(qf, αq, γ, λ)
+    qopt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(qf, αq, γ, λ)
 
-    agent = Rllib.Sarsa(qf, qopt, γ, ϵ)
+    agent = EvaluationOfRLAlgs.Sarsa(qf, qopt, γ, ϵ)
     return agent, hyps, logp
 end
 
 
 function CreateSarsaParl2(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -162,13 +162,13 @@ function CreateSarsaParl2(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        qf = Rllib.LinearFunction(Float64, ϕ, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
     else
-        qf = Rllib.LinearFunction(Float64, sdesc, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -186,15 +186,15 @@ function CreateSarsaParl2(env, rng)
     logp += log(1.0 / (ϵrange[2] - ϵrange[1]))
     push!(hyps, ϵ)
 
-    qopt = Rllib.Parl2AccumulatingTraceOptimizer(qf, γ, λ)
+    qopt = EvaluationOfRLAlgs.Parl2AccumulatingTraceOptimizer(qf, γ, λ)
 
-    agent = Rllib.Sarsa(qf, qopt, γ, ϵ)
+    agent = EvaluationOfRLAlgs.Sarsa(qf, qopt, γ, ϵ)
     return agent, hyps, logp
 end
 
 function CreateQLambda(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -208,13 +208,13 @@ function CreateQLambda(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        qf = Rllib.LinearFunction(Float64, ϕ, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
     else
-        qf = Rllib.LinearFunction(Float64, sdesc, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -240,15 +240,15 @@ function CreateQLambda(env, rng)
     αq, qalogp = logRand(qarange[1], qarange[2], rng)
     logp += qalogp
     push!(hyps, αq)
-    qopt = Rllib.AccumulatingTraceOptimizer(qf, αq, γ, λ)
+    qopt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(qf, αq, γ, λ)
 
-    agent = Rllib.QLearning(qf, qopt, γ, ϵ)
+    agent = EvaluationOfRLAlgs.QLearning(qf, qopt, γ, ϵ)
     return agent, hyps, logp
 end
 
 function CreateQLambdaScaled(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -262,13 +262,13 @@ function CreateQLambdaScaled(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        qf = Rllib.LinearFunction(Float64, ϕ, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
     else
-        qf = Rllib.LinearFunction(Float64, sdesc, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -289,22 +289,22 @@ function CreateQLambdaScaled(env, rng)
     if discrete_states
         qarange = [1e-3, 0.1]
     else
-        phi_dim = Rllib.get_num_outputs(ϕ)
+        phi_dim = EvaluationOfRLAlgs.get_num_outputs(ϕ)
         qarange = [1e-3, 1.0] ./ phi_dim
     end
     αq, qalogp = logRand(qarange[1], qarange[2], rng)
     logp += qalogp
     push!(hyps, αq)
-    qopt = Rllib.AccumulatingTraceOptimizer(qf, αq, γ, λ)
+    qopt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(qf, αq, γ, λ)
 
-    agent = Rllib.QLearning(qf, qopt, γ, ϵ)
+    agent = EvaluationOfRLAlgs.QLearning(qf, qopt, γ, ϵ)
     return agent, hyps, logp
 end
 
 
 function CreateQParl2(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -318,13 +318,13 @@ function CreateQParl2(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        qf = Rllib.LinearFunction(Float64, ϕ, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
     else
-        qf = Rllib.LinearFunction(Float64, sdesc, num_actions)
+        qf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -342,15 +342,15 @@ function CreateQParl2(env, rng)
     logp += log(1.0 / (ϵrange[2] - ϵrange[1]))
     push!(hyps, ϵ)
 
-    qopt = Rllib.Parl2AccumulatingTraceOptimizer(qf, γ, λ)
+    qopt = EvaluationOfRLAlgs.Parl2AccumulatingTraceOptimizer(qf, γ, λ)
 
-    agent = Rllib.QLearning(qf, qopt, γ, ϵ)
+    agent = EvaluationOfRLAlgs.QLearning(qf, qopt, γ, ϵ)
     return agent, hyps, logp
 end
 
 function CreateActorCritic(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -364,17 +364,17 @@ function CreateActorCritic(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        vf = Rllib.LinearFunction(Float64, ϕ, 1)
-        pf = Rllib.LinearFunction(Float64, ϕ, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     else
-        vf = Rllib.LinearFunction(Float64, sdesc, 1)
-        pf = Rllib.LinearFunction(Float64, sdesc, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -399,16 +399,16 @@ function CreateActorCritic(env, rng)
     logp += valogp
     push!(hyps, αp)
     push!(hyps, αv)
-    popt = Rllib.AccumulatingTraceOptimizer(policy, αp, γ, λ)
-    vopt = Rllib.AccumulatingTraceOptimizer(vf, αv, γ, λ)
+    popt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(policy, αp, γ, λ)
+    vopt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(vf, αv, γ, λ)
 
-    agent = Rllib.ActorCritic(policy, vf, popt, vopt, γ)
+    agent = EvaluationOfRLAlgs.ActorCritic(policy, vf, popt, vopt, γ)
     return agent, hyps, logp
 end
 
 function CreateActorCriticScaled(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -422,17 +422,17 @@ function CreateActorCriticScaled(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        vf = Rllib.LinearFunction(Float64, ϕ, 1)
-        pf = Rllib.LinearFunction(Float64, ϕ, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     else
-        vf = Rllib.LinearFunction(Float64, sdesc, 1)
-        pf = Rllib.LinearFunction(Float64, sdesc, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -448,7 +448,7 @@ function CreateActorCriticScaled(env, rng)
         varange = [1e-3, 0.1]
         parange = [1e-3, 0.1]
     else
-        phi_dim = Rllib.get_num_outputs(ϕ)
+        phi_dim = EvaluationOfRLAlgs.get_num_outputs(ϕ)
         varange = [1e-3, 1.0] ./ phi_dim
         parange = [1e-3, 1.0] ./ (phi_dim*num_actions)
     end
@@ -458,16 +458,16 @@ function CreateActorCriticScaled(env, rng)
     logp += valogp
     push!(hyps, αp)
     push!(hyps, αv)
-    popt = Rllib.AccumulatingTraceOptimizer(policy, αp, γ, λ)
-    vopt = Rllib.AccumulatingTraceOptimizer(vf, αv, γ, λ)
+    popt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(policy, αp, γ, λ)
+    vopt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(vf, αv, γ, λ)
 
-    agent = Rllib.ActorCritic(policy, vf, popt, vopt, γ)
+    agent = EvaluationOfRLAlgs.ActorCritic(policy, vf, popt, vopt, γ)
     return agent, hyps, logp
 end
 
 function CreateActorCriticParl2(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -481,17 +481,17 @@ function CreateActorCriticParl2(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        vf = Rllib.LinearFunction(Float64, ϕ, 1)
-        pf = Rllib.LinearFunction(Float64, ϕ, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     else
-        vf = Rllib.LinearFunction(Float64, sdesc, 1)
-        pf = Rllib.LinearFunction(Float64, sdesc, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -506,22 +506,22 @@ function CreateActorCriticParl2(env, rng)
     if discrete_states
         parange = [1e-3, 0.1]
     else
-        phi_dim = Rllib.get_num_outputs(ϕ)
+        phi_dim = EvaluationOfRLAlgs.get_num_outputs(ϕ)
         parange = [1e-3, 1.0] ./ (phi_dim*num_actions)
     end
     αp, palogp = logRand(parange[1], parange[2], rng)
     logp += palogp
     push!(hyps, αp)
-    popt = Rllib.AccumulatingTraceOptimizer(policy, αp, γ, λ)
-    vopt =  Rllib.Parl2AccumulatingTraceOptimizer(vf, γ, λ)
+    popt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(policy, αp, γ, λ)
+    vopt =  EvaluationOfRLAlgs.Parl2AccumulatingTraceOptimizer(vf, γ, λ)
 
-    agent = Rllib.ActorCritic(policy, vf, popt, vopt, γ)
+    agent = EvaluationOfRLAlgs.ActorCritic(policy, vf, popt, vopt, γ)
     return agent, hyps, logp
 end
 
 function CreateNACTD(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -535,18 +535,18 @@ function CreateNACTD(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        vf = Rllib.LinearFunction(Float64, ϕ, 1)
-        pf = Rllib.LinearFunction(Float64, ϕ, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     else
-        vf = Rllib.LinearFunction(Float64, sdesc, 1)
-        pf = Rllib.LinearFunction(Float64, sdesc, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     end
-    wf = Rllib.LinearFunction(Float64, Rllib.get_num_params(policy), 1)
+    wf = EvaluationOfRLAlgs.LinearFunction(Float64, EvaluationOfRLAlgs.get_num_params(policy), 1)
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -576,21 +576,21 @@ function CreateNACTD(env, rng)
     push!(hyps, αp)
     push!(hyps, αw)
     push!(hyps, αv)
-    popt = Rllib.SGA(policy, αp)
-    wopt = Rllib.AccumulatingTraceOptimizer(wf, αw, γ, λ)
-    vopt = Rllib.AccumulatingTraceOptimizer(vf, αv, γ, λ)
+    popt = EvaluationOfRLAlgs.SGA(policy, αp)
+    wopt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(wf, αw, γ, λ)
+    vopt = EvaluationOfRLAlgs.AccumulatingTraceOptimizer(vf, αv, γ, λ)
 
     # normalizew = rand(rng, [true, false])
     # logp += log(0.5)
     normalizew = true
     push!(hyps, normalizew)
-    agent = Rllib.NACTD(policy, vf, wf, popt, vopt, wopt, γ, Bool(normalizew))
+    agent = EvaluationOfRLAlgs.NACTD(policy, vf, wf, popt, vopt, wopt, γ, Bool(normalizew))
     return agent, hyps, logp
 end
 
 function CreatePPO(env, rng)
-    sdesc = Rllib.get_state_desc(env)
-    num_actions = Rllib.get_action_desc(env)
+    sdesc = EvaluationOfRLAlgs.get_state_desc(env)
+    num_actions = EvaluationOfRLAlgs.get_action_desc(env)
     hyps = []
     logp = 0.0
     if typeof(sdesc) <: AbstractArray
@@ -604,17 +604,17 @@ function CreatePPO(env, rng)
         ϕ, bhyps, blogp = sample_fourierbasis(dorder_range, iorder_range, sdesc, rng)
         append!(hyps, bhyps)
         logp += blogp
-        vf = Rllib.LinearFunction(Float64, ϕ, 1)
-        pf = Rllib.LinearFunction(Float64, ϕ, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, ϕ, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     else
-        vf = Rllib.LinearFunction(Float64, sdesc, 1)
-        pf = Rllib.LinearFunction(Float64, sdesc, num_actions)
-        policy = Rllib.LinearSoftmaxPolicy(pf)
+        vf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, 1)
+        pf = EvaluationOfRLAlgs.LinearFunction(Float64, sdesc, num_actions)
+        policy = EvaluationOfRLAlgs.LinearSoftmaxPolicy(pf)
     end
 
     # sample gamma
-    Γ = Rllib.get_gamma(env)
+    Γ = EvaluationOfRLAlgs.get_gamma(env)
     γrange = (1e-4, 0.05)
     gamma, glogp = logRand(γrange[1], γrange[2], rng)
     logp += glogp
@@ -663,10 +663,10 @@ function CreatePPO(env, rng)
     logp += palogp
     push!(hyps, αp)
 
-	popt = Rllib.Adam(policy, αp, ϵ=ϵ)
-	vopt = Rllib.Adam(vf, αp, ϵ=ϵ)
+	popt = EvaluationOfRLAlgs.Adam(policy, αp, ϵ=ϵ)
+	vopt = EvaluationOfRLAlgs.Adam(vf, αp, ϵ=ϵ)
 
-    agent = Rllib.PPO(policy, vf, popt, vopt, γ, λ, clip_param, entropy_coef, steps_per_batch, num_epochs, batch_size, typeof(env.state), Int)
+    agent = EvaluationOfRLAlgs.PPO(policy, vf, popt, vopt, γ, λ, clip_param, entropy_coef, steps_per_batch, num_epochs, batch_size, typeof(env.state), Int)
 
     return agent, hyps, logp
 end
