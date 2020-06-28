@@ -1,0 +1,12 @@
+{
+  "env": {
+    "name": "gridworld",
+    "randomize": true,
+    "action_type": "discrete",
+    "size": 10,
+    "stransition": true,
+    "num_episodes": 100,
+    "num_endepisodes": 30,
+    "logname": "gw10s"
+  }
+}

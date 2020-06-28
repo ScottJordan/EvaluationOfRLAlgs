@@ -1,0 +1,10 @@
+{
+  "env": {
+    "name": "bicycle",
+    "randomize": true,
+    "action_type": "discrete",
+    "num_episodes": 1000,
+    "num_endepisodes": 30,
+    "logname": "bike"
+  }
+}

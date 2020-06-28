@@ -1,0 +1,12 @@
+{
+  "env": {
+    "name": "chain",
+    "randomize": true,
+    "action_type": "discrete",
+    "size": 10,
+    "stransition": false,
+    "num_episodes": 100,
+    "num_endepisodes": 30,
+    "logname": "chain10d"
+  }
+}

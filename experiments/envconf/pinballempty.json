@@ -1,0 +1,12 @@
+{
+  "env": {
+    "name": "pinball",
+    "randomize": true,
+    "action_type": "discrete",
+    "stochasticstart": true,
+    "mapname": "pinball_empty.cfg",
+    "num_episodes": 100,
+    "num_endepisodes": 30,
+    "logname": "pbempt"
+  }
+}

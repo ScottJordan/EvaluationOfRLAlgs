@@ -1,0 +1,11 @@
+{
+  "env": {
+    "name": "mountaincar",
+    "randomize": true,
+    "action_type": "discrete",
+    "stochasticstart": true,
+    "num_episodes": 100,
+    "num_endepisodes": 30,
+    "logname": "mntcar_d"
+  }
+}

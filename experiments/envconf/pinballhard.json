@@ -1,0 +1,12 @@
+{
+  "env": {
+    "name": "pinball",
+    "randomize": true,
+    "action_type": "discrete",
+    "stochasticstart": true,
+    "mapname": "pinball_hard_single.cfg",
+    "num_episodes": 200,
+    "num_endepisodes": 30,
+    "logname": "pbhard"
+  }
+}

@@ -1,6 +1,5 @@
-using EvaluationOfRLAlgs
-using Test
+#!/usr/bin/env julia
 
-@testset "EvaluationOfRLAlgs.jl" begin
-    # Write your tests here.
-end
+using EvaluationOfRLAlgs, Test
+println("Starting tests")
+println("Finished tests")

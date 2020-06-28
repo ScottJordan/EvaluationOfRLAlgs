@@ -1,0 +1,11 @@
+{
+  "env": {
+    "name": "acrobot",
+    "randomize": true,
+    "action_type": "discrete",
+    "stochasticstart": true,
+    "num_episodes": 500,
+    "num_endepisodes": 30,
+    "logname": "acrobot_d"
+  }
+}

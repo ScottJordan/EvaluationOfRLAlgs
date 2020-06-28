@@ -1,0 +1,10 @@
+{
+  "env": {
+    "name": "cartpole",
+    "randomize": true,
+    "action_type": "discrete",
+    "num_episodes": 100,
+    "num_endepisodes": 30,
+    "logname": "cartpole_d"
+  }
+}
