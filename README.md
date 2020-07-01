@@ -2,7 +2,7 @@
 
 This repository contains the code need to replicate the experiments in the paper:
 
-Scott M. Jordan, Yash Chandak Daniel Cohen, Mengxue Zhang, Philip S. Thomas, **Evaluating the Performance of Reinforcement Learning Algorithms** (ICML, 2020) [[ICML](https://icml.cc/Conferences/2020/AcceptedPapersInitial)] [[ArXiv (not-yet-uploaded)](tbd)] [[Video (not-yet-uploaded)](tbd)] [[Code](https://github.com/scottjordan/EvaluationOfRLAlgs)]
+Scott M. Jordan, Yash Chandak Daniel Cohen, Mengxue Zhang, Philip S. Thomas, **Evaluating the Performance of Reinforcement Learning Algorithms** (ICML, 2020) [[ICML](https://icml.cc/Conferences/2020/AcceptedPapersInitial)] [[ArXiv](https://arxiv.org/abs/2006.16958)] [[Video (not-yet-uploaded)](tbd)] [[Code](https://github.com/scottjordan/EvaluationOfRLAlgs)]
 
 ## Citing
 
